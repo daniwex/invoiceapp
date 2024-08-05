@@ -8,7 +8,7 @@ export function middleware(request) {
   if (currentUser && request.nextUrl.pathname.endsWith("register")) {
     return Response.redirect(new URL("/dashboard", request.url));
   }
-  if (!currentUser && request.nextUrl.pathname.includes("feed")) {
+  if (!currentUser && request.nextUrl.pathname.includes("dashboard")) {
     return Response.redirect(new URL("/", request.url));
   }
 }

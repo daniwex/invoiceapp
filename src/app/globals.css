@@ -54,3 +54,6 @@ label {
     text-wrap: balance;
   }
 }
+.bg-abs{
+  background-color: rgba(128, 128, 128, 0.222)
+}

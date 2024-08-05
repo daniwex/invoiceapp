@@ -138,7 +138,7 @@ export default function page() {
                 Project Terms
               </label>
               <select className="bg-transparent h-16 border-2 px-5">
-                <option>Next 30 days</option>
+                <option>Net 30 days</option>
               </select>
             </div>
             <div className="grid grid-cols-1 gap-y-4 mb-5">
@@ -161,15 +161,23 @@ export default function page() {
               className="text-[#7C5DFA] text-center w-full bg-[#F9FAFE] h-14 font-bold flex items-center justify-center"
               onClick={(e) => {
                 e.preventDefault();
-                setItemsList((itemsList) =>[...itemsList, <Item closebtn={() => console.log(true)} />]
-                );
+                setItemsList((itemsList) => [
+                  ...itemsList,
+                  <Item closebtn={() => console.log(true)} />,
+                ]);
               }}
             >
               <img className="pr-3" src="/assets/icon-plus.svg" /> Add new Item
             </button>
+            <div className="grid grid-cols-3 gap-x-1 h-fit py-7">
+              <button className="text-[#7C5DFA] text-center w-full bg-[#F9FAFE] h-14 font-bold flex items-center justify-center">Discard</button>
+              <button className="text-[#888EB0] text-center rounded-full w-full bg-[#373B53] h-14 font-bold flex items-center justify-center">Save as Draft</button>
+              <button className="text-white rounded-full text-center w-full bg-[#7C5DFA] h-14 font-bold flex items-center justify-center">Save & Send</button>
+            </div>
           </form>
         </div>
       </div>
     </div>
   );
 }
+                                 
