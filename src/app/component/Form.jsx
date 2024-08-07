@@ -1,31 +1,27 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Item from "@/app/component/Item";
-import {id} from "../utility/utils";
+import { id } from "../utility/utils";
 
-export default function Form({ left = "5%", closeform, formTitle }) {
+export default function Form({
+  left = "5%",
+  closeform,
+  formTitle,
+  saveDraft,
+  fieldData,
+  formtype = "create",
+  saveData,
+  handleData,
+  handleInputChange,
+}) {
   let [itemsList, setItemsList] = useState([]);
-  let [quantity, setQuantity] = useState(0);
-  let [price, setPrice] = useState(0);
-  let [idd, setId] = useState('')
-  const router = useRouter();
-  function closebtn() {
-    return 3;
-  }
+  let [idd, setId] = useState(id());
 
-  function generateId(){
-    let genId = id()
-    setId(genId)
-  }
 
-  function removeHandler(id){
-    setItemsList(itemsList => itemsList.filter(el => el.key != id))
-  }
-
-  function addNewItem(e) {
-    e.preventDefault();
-    setItemsList((itemsList = [...itemsList, <Item />]));
+  function removeHandler(id) {
+    setItemsList(
+      (itemsList) => (itemsList = itemsList.filter((el) => el.key != id))
+    );
   }
   return (
     <div
@@ -45,23 +41,29 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 id="address"
                 type="text"
                 className=" border bg-[#F8F8FB] h-12 px-5"
+                value={fieldData["street"]}
+                onChange={(e) => handleData("street", e.target.value)}
               />
             </div>
             <div className="grid grid-cols-3 gap-x-3">
-                <div className="">
-                  <label className="text-sm">City</label>
-                  <input
-                    type="text"
-                    className=" border bg-[#F8F8FB] h-12 px-5 w-full"
-                  />
-                </div>
-                <div className="">
-                  <label className="text-sm">Post Code</label>
-                  <input
-                    type="text"
-                    className=" border bg-[#F8F8FB] h-12 px-5 w-full"
-                  />
-                </div>
+              <div className="">
+                <label className="text-sm">City</label>
+                <input
+                  type="text"
+                  className=" border bg-[#F8F8FB] h-12 px-5 w-full"
+                  value={fieldData["city"]}
+                  onChange={(e) => handleData("city", e.target.value)}
+                />
+              </div>
+              <div className="">
+                <label className="text-sm">Post Code</label>
+                <input
+                  type="text"
+                  className=" border bg-[#F8F8FB] h-12 px-5 w-full"
+                  value={fieldData["pcode"]}
+                  onChange={(e) => handleData("pcode", e.target.value)}
+                />
+              </div>
               <div className="">
                 <label htmlFor="address" className="text-sm">
                   Country
@@ -70,6 +72,8 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                   id="address"
                   type="text"
                   className=" border bg-[#F8F8FB] h-12 px-5"
+                  value={fieldData["country"]}
+                  onChange={(e) => handleData("country", e.target.value)}
                 />
               </div>
             </div>
@@ -82,6 +86,8 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 id="address"
                 type="text"
                 className=" border bg-[#F8F8FB] h-12 px-5"
+                value={fieldData["recipient_name"]}
+                onChange={(e) => handleData("recipient_name", e.target.value)}
               />
             </div>
             <div className="grid grid-cols-1 gap-y-4 mb-5">
@@ -92,6 +98,8 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 id="address"
                 type="email"
                 className=" border bg-[#F8F8FB] h-12 px-5"
+                value={fieldData["recipient_email"]}
+                onChange={(e) => handleData("recipient_email", e.target.value)}
               />
             </div>
             <div className="grid grid-cols-1 gap-y-4 mb-5">
@@ -102,6 +110,10 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 id="address"
                 type="text"
                 className=" border bg-[#F8F8FB] h-12 px-5"
+                value={fieldData["recipient_address"]}
+                onChange={(e) =>
+                  handleData("recipient_address", e.target.value)
+                }
               />
             </div>
             <div className="grid grid-cols-3 gap-x-3">
@@ -110,6 +122,8 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 <input
                   type="text"
                   className=" border bg-[#F8F8FB] h-12 px-5 w-full"
+                  value={fieldData["recipient_city"]}
+                  onChange={(e) => handleData("recipient_city", e.target.value)}
                 />
               </div>
               <div className="">
@@ -117,40 +131,54 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 <input
                   type="text"
                   className=" border bg-[#F8F8FB] h-12 px-5 w-full"
+                  value={fieldData["recipient_pcode"]}
+                  onChange={(e) =>
+                    handleData("recipient_pcode", e.target.value)
+                  }
                 />
               </div>
-            <div className="">
-              <label htmlFor="address" className="text-sm">
-                Country
-              </label>
-              <input
-                id="address"
-                type="text"
-                className=" border bg-[#F8F8FB] h-12 px-5"
-              />
+              <div className="">
+                <label htmlFor="address" className="text-sm">
+                  Country
+                </label>
+                <input
+                  id="address"
+                  type="text"
+                  className=" border bg-[#F8F8FB] h-12 px-5"
+                  value={fieldData["recipient_country"]}
+                  onChange={(e) =>
+                    handleData("recipient_country", e.target.value)
+                  }
+                />
+              </div>
             </div>
+            <div className="grid grid-cols-2 my-7 gap-x-3">
+              <div className="">
+                <label htmlFor="date" className="text-sm block">
+                  Invoice Date
+                </label>
+                <input
+                  id="date"
+                  type="date"
+                  className=" border bg-[#F8F8FB] h-12 px-5 w-full"
+                  value={fieldData["invoice_date"]}
+                  onChange={(e) => handleData("invoice_date", e.target.value)}
+                />
+              </div>
+              <div className="">
+                <label htmlFor="description" className="text-sm block">
+                  Project Terms
+                </label>
+                <select
+                  className="bg-transparent h-12 border px-5 w-full"
+                  value={fieldData["project_terms"]}
+                  onChange={(e) => handleData("project_terms", e.target.value)}
+                >
+                  <option>Next 30 days</option>
+                </select>
+              </div>
             </div>
-          <div className="grid grid-cols-2 my-7 gap-x-3">
-          <div className="">
-              <label htmlFor="date" className="text-sm block">
-                Invoice Date
-              </label>
-              <input
-                id="date"
-                type="date"
-                className=" border bg-[#F8F8FB] h-12 px-5 w-full"
-              />
-            </div>
-            <div className="">
-              <label htmlFor="description" className="text-sm block">
-                Project Terms
-              </label>
-              <select className="bg-transparent h-12 border px-5 w-full">
-                <option>Next 30 days</option>
-              </select>
-            </div>
-          </div>
-           
+
             <div className="grid grid-cols-1 gap-y-4 mb-5">
               <label htmlFor="description" className="text-sm">
                 Project description
@@ -159,6 +187,10 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 id="description"
                 type="text"
                 className=" border bg-[#F8F8FB] h-12 px-5"
+                value={fieldData["project_description"]}
+                onChange={(e) =>
+                  handleData("project_description", e.target.value)
+                }
               />
             </div>
             <div className="text-[#7C5DFA] font-bold py-5">Item List</div>
@@ -171,10 +203,22 @@ export default function Form({ left = "5%", closeform, formTitle }) {
               className="text-[#7C5DFA] text-center w-full bg-[#F9FAFE] h-14 font-bold flex items-center justify-center"
               onClick={(e) => {
                 e.preventDefault();
-                generateId()
+                setId(id());
                 setItemsList((itemsList) => [
                   ...itemsList,
-                  <Item key={idd} closebtn={(e) => removeHandler(idd)} />,
+                  <Item
+                    key={idd}
+                    item_name={(e) =>
+                      handleInputChange(e.target.value, "item_name", idd)
+                    }
+                    getPrice={(e) =>
+                      handleInputChange(e.target.value, "item_price", idd)
+                    }
+                    getNumber={(e) =>
+                      handleInputChange(e.target.value, "item_number", idd)
+                    }
+                    closebtn={() => removeHandler(idd)}
+                  />,
                 ]);
               }}
             >
@@ -188,10 +232,16 @@ export default function Form({ left = "5%", closeform, formTitle }) {
                 Discard
               </button>
               <div className="grid grid-cols-2 gap-x-2 ">
-                <button className="text-[#888EB0] text-center rounded-full  bg-[#373B53] h-14 font-bold flex items-center justify-center px-3">
+                <button
+                  onClick={(e) => saveDraft(e)}
+                  className="text-[#888EB0] text-center rounded-full  bg-[#373B53] h-14 font-bold flex items-center justify-center px-3"
+                >
                   Save as Draft
                 </button>
-                <button className="text-white rounded-full text-center  bg-[#7C5DFA] h-14 font-bold flex items-center justify-center px-3">
+                <button
+                  onClick={saveData}
+                  className="text-white rounded-full text-center  bg-[#7C5DFA] h-14 font-bold flex items-center justify-center px-3"
+                >
                   Save & Send
                 </button>
               </div>

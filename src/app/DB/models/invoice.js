@@ -1,19 +1,30 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const subSchema = new Schema({
   name: { type: String },
   quantity: { type: Number },
   price: { type: Number },
+  identifier: {type:String}
 });
 
 const invoiceSchema = new Schema({
+  user:{
+    type:mongoose.Types.ObjectId,
+    ref:'users'
+  },
+  formId:{
+    type:String
+  },
   sender_address: {
     type: String,
   },
+  status:{type:String},
   sender_city: {
     type: String,
   },
-  sender_postcode: {},
+  sender_postcode: {
+    type:String
+  },
   sender_country: {
     type: String,
   },
