@@ -1,14 +1,26 @@
-'use client'
+"use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
+import {  useAppContext } from "../store/context";
 
-export default function Item({getNumber, getPrice, closebtn, item_name, quantityvalue=0, pricevalue=0, item_name_value}) {
- let [total, setTotal] = useState(0)
- function findTotal(){
-    setTotal(Number(quantityvalue) * Number(pricevalue))
- }
+export default function Item({
+  getNumber,
+  getPrice,
+  closebtn,
+  item_name,
+  quantityvalue=0,
+  pricevalue=0,
+  item_name_value,
+}) {
+  const [total, setTotal] = useState(0)
+  const [q, setq] = useState(0)
+  const [p, setp] = useState(0)
+  function findTotal(){
+    setTotal(Number(p) * Number(q))
+  }
+  const {theme} = useAppContext()
 
- useMemo(() => findTotal(), [quantityvalue, pricevalue])
+  useMemo(() => findTotal(), [q, p]);
   return (
     <div className="my-2 text-sm">
       <div className="grid grid-cols-1 gap-y-4 mb-5">
@@ -18,7 +30,7 @@ export default function Item({getNumber, getPrice, closebtn, item_name, quantity
         <input
           id="item_name"
           type="text"
-          className=" border bg-[#F8F8FB] h-12 px-5"
+          className={`border  h-12 px-5 w-full ${theme == 'dark' ? 'bg-[#373B53]': 'bg-[#F8F8FB]'}`}
           value={item_name_value}
           onChange={(e) => item_name(e)}
         />
@@ -28,27 +40,36 @@ export default function Item({getNumber, getPrice, closebtn, item_name, quantity
           <label className="text-sm">Qty</label>
           <input
             type="number"
-            className=" border bg-[#F8F8FB] h-16 px-5 w-full"
-            onChange={(e) => {getNumber(e)}}
-            defaultValue={quantityvalue}
+            className={`border  h-12 px-5 w-full ${theme == 'dark' ? 'bg-[#373B53]': 'bg-[#F8F8FB]'}`}
+            onChange={(e) => {
+              getNumber(e);
+              setq(e.target.value)
+            }}
+            Value={quantityvalue}
           />
         </div>
         <div className="col-span-2">
           <label className="text-sm">Price</label>
           <input
             type="number"
-            className=" border bg-[#F8F8FB] h-16 px-5 w-full"
-            onChange={(e) => { getPrice(e)}}
-            defaultValue={pricevalue}
-
+            className={`border  h-12 px-5 w-full ${theme == 'dark' ? 'bg-[#373B53]': 'bg-[#F8F8FB]'}`}
+            onChange={(e) => {
+              getPrice(e);
+              setp(e.target.value)
+            }}
+            Value={pricevalue}
           />
         </div>
         <div className="">
           <label className="text-sm">Total</label>
-          <div>{total=9}</div>
+          <div>{total}</div>
         </div>
         <div>
-          <i style={{color:'#888EB0'}} class="fas fa-trash cursor-pointer" onClick={closebtn}></i>
+          <i
+            style={{ color: "#888EB0" }}
+            class="fas fa-trash cursor-pointer"
+            onClick={closebtn}
+          ></i>
         </div>
       </div>
     </div>

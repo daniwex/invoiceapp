@@ -89,8 +89,8 @@ export const POST = async(req, res) => {
             invoice_date:data.invoice_date,
             payment_terms:data.payment_terms,
             project_description: data.project_description,
-            item_list:{...data.item_list},
         })
+        invoice.item_list.push(...Object.values(data.item_list))
         invoice.save()
     return NextResponse.json({message:"draft saved"}, {status:201})
     } catch (error) {

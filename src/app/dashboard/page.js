@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, Suspense } from "react";
 import Form from "../component/Form";
 import { useRouter } from "next/navigation";
 import { generateFormId } from "../utility/utils";
 import Message from "../component/Message";
 import Invoices from "../component/Invoices";
+import {  useAppContext } from "../store/context";
 
 export default function page() {
   let [invoices, setInvoices] = useState([]);
@@ -15,6 +16,8 @@ export default function page() {
   const [message, setMessage] = useState("");
   let [timer, setTimer] = useState({ start: false, time: 5000 });
   const [isPending, startTransition] = useTransition();
+  const { theme} = useAppContext()
+
 
   let [fieldData, setFieldData] = useState({
     formId: generateFormId(),
@@ -29,7 +32,7 @@ export default function page() {
     recipient_pcode: "",
     recipient_country: "",
     invoice_date: "",
-    project_terms: "30",
+    project_terms: "1",
     project_description: "",
     item_list: {},
     status: "draft",
@@ -79,7 +82,7 @@ export default function page() {
     getData();
   }, [createForm]);
   return (
-    <div className="py-10 px-5 sm:w-full sm:flex sm:justify-center sm:h-screen sm:overflow-y-scroll transition duration-300 ease-in">
+    <div className={`py-10 px-5 sm:w-full sm:flex sm:justify-center sm:h-screen  transition duration-300 ease-in ${theme == 'light' ? 'bg-[#F8F8FB]' : 'bg-[#0C0E16] text-white'}`}>
       <div className="sm:w-3/5">
         <div className="flex justify-between">
           <div>
@@ -138,7 +141,9 @@ export default function page() {
             </div>
           ) : (
             <div className="sm:mt-20">
-              <Invoices invoices={invoices} />
+              <Suspense fallback={<span className="text-black">Loading</span>}>
+                <Invoices invoices={invoices} />
+              </Suspense>
             </div>
           )}
         </div>

@@ -1,11 +1,11 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
-const subSchema = new Schema({
-  name: { type: String },
-  quantity: { type: Number },
-  price: { type: Number },
-  identifier: {type:String}
-});
+// const subSchema = new Schema({
+//   name: { type: String },
+//   quantity: { type: Number },
+//   price: { type: Number },
+//   identifier: {type:String}
+// });
 
 const invoiceSchema = new Schema({
   user:{
@@ -55,7 +55,7 @@ const invoiceSchema = new Schema({
   project_description: {
     type: String,
   },
-  item_list: [subSchema],
+  item_list: [],
 });
 
 export const Invoice = models.Invoice || model("Invoice", invoiceSchema);

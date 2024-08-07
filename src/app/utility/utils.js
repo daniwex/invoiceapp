@@ -44,3 +44,12 @@ export function getDate(date){
 //   const { [key]: _, ...rest } = obj;
 //   return rest;
 // }
+
+export function getFullAmount(arr){
+    let result = 0
+    for(let i=0;i<arr.length;i++){
+        const total = parseFloat(arr[i].item_number) * parseFloat(arr[i].item_price)
+        result += total
+    }
+    return result
+}
