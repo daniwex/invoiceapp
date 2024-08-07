@@ -88,6 +88,7 @@ export const POST = async(req, res) => {
             recipient_country:data.recipient_country,
             invoice_date:data.invoice_date,
             payment_terms:data.payment_terms,
+            project_description: data.project_description,
             item_list:{...data.item_list},
         })
         invoice.save()
@@ -102,7 +103,6 @@ export const GET = async(req, res) => {
     try {
         await connectToDB();
         const invoices = await Invoice.find({user})
-        console.log(invoices)
         return NextResponse.json(invoices, {status:200})
     } catch (error) {
         console.log(error)
