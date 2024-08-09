@@ -6,18 +6,18 @@ import { useRouter } from "next/navigation";
 import { generateFormId } from "../utility/utils";
 import Message from "../component/Message";
 import Invoices from "../component/Invoices";
-import {  useAppContext } from "../store/context";
+import { useAppContext } from "../store/context";
 
 export default function page() {
   let [invoices, setInvoices] = useState([]);
   const [createForm, setCreateForm] = useState(false);
   let [items_list, setlist] = useState({});
   let [data, setData] = useState({});
-  const [message, setMessage] = useState("");
-  let [timer, setTimer] = useState({ start: false, time: 5000 });
-  const [isPending, startTransition] = useTransition();
-  const { theme} = useAppContext()
-
+  let { theme, messageSetter, message } = useAppContext();
+  const [error, setError] = useState({});
+  if (message != "") {
+    setTimeout(() => messageSetter("", 5000, false), message.time);
+  }
 
   let [fieldData, setFieldData] = useState({
     formId: generateFormId(),
@@ -47,9 +47,9 @@ export default function page() {
   function handleData(key, value) {
     setFieldData((fieldData) => ({ ...fieldData, [key]: value }));
   }
+
   async function saveDraft(e) {
     e.preventDefault();
-    setTimer((timer = { ...timer, start: true }));
     fieldData["item_list"] = { ...items_list };
     try {
       const req = await fetch("/api/invoice", {
@@ -58,7 +58,35 @@ export default function page() {
       });
       if (req.ok) {
         const res = await req.json();
-        setMessage(res.message);
+        messageSetter(res.message, 5000, true);
+        {
+          setTimeout(() => messageSetter("", 9000, false), message.time);
+        }
+        setCreateForm(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function saveData(e) {
+    e.preventDefault();
+    if (Object.values(fieldData).some((el) => el == "")) {
+      alert("need more data");
+      return;
+    }
+    fieldData["item_list"] = { ...items_list };
+    fieldData["status"] = "pending";
+    try {
+      const req = await fetch("/api/invoice", {
+        method: "POST",
+        body: JSON.stringify(fieldData),
+      });
+      if (req.ok) {
+        const res = await req.json();
+        messageSetter(res.message, 5000, true);
+        {
+          setTimeout(() => messageSetter("", 5000, false), message.time);
+        }
         setCreateForm(false);
       }
     } catch (error) {
@@ -82,7 +110,11 @@ export default function page() {
     getData();
   }, [createForm]);
   return (
-    <div className={`py-10 px-5 sm:w-full sm:flex sm:justify-center sm:h-screen  transition duration-300 ease-in ${theme == 'light' ? 'bg-[#F8F8FB]' : 'bg-[#0C0E16] text-white'}`}>
+    <div
+      className={`py-10 px-5 sm:w-full sm:flex sm:justify-center sm:h-screen  transition duration-300 ease-in ${
+        theme == "light" ? "bg-[#F8F8FB]" : "bg-[#0C0E16] text-white"
+      }`}
+    >
       <div className="sm:w-3/5">
         <div className="flex justify-between">
           <div>
@@ -92,8 +124,10 @@ export default function page() {
             </span>
           </div>
           <div className="grid grid-cols-2 place-items-center">
-            <select className="bg-transparent">
-              <option>Filter</option>
+            <select className="bg-transparent text-sm">
+              <option>Filter by status</option>
+              <option>Filter by pending</option>
+              <option>Filter by paid</option>
             </select>
             <Link
               className="bg-[#7C5DFA] text-white h-11 flex items-center w-24 justify-center rounded-full cursor-pointer sm:hidden"
@@ -121,6 +155,7 @@ export default function page() {
                 handleData={handleData}
                 handleInputChange={handleInputChange}
                 fieldData={fieldData}
+                saveData={saveData}
               />
             ) : (
               <></>
@@ -147,14 +182,9 @@ export default function page() {
             </div>
           )}
         </div>
-        {message && timer.start ? (
+        {message.mess != "" && message.start ? (
           <>
-            <Message message={message} show="96vw" />
-            {setTimeout(() => {
-              () => setMessage("");
-
-              setTimer((timer = { ...timer, start: false }));
-            }, timer.time)}
+            <Message message={message.mess} show="96vw" />
           </>
         ) : (
           <></>

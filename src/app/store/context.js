@@ -7,10 +7,13 @@ export function useAppContext() {
   }
   
 export function CustomContext({ children }) {
-  const [message, setMessage] = useState("");
+  let [message, setMessage] = useState({ start: false, time: 5000, mess:"" });
   const [theme, setTheme] = useState("light")
   function handletoggleTheme(theme){
     setTheme(theme)
   }
-  return <AppContext.Provider value={{message,theme, toggleTheme:handletoggleTheme}}>{children}</AppContext.Provider>;
+  function messageSetter(message, time=5000, start=false){
+    setMessage({mess:message, time:time, start:start})
+  }
+  return <AppContext.Provider value={{message,messageSetter:messageSetter,theme, toggleTheme:handletoggleTheme}}>{children}</AppContext.Provider>;
 }

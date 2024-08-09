@@ -8,13 +8,13 @@ export default function Item({
   getPrice,
   closebtn,
   item_name,
-  quantityvalue=0,
-  pricevalue=0,
+  quantityvalue,
+  pricevalue,
   item_name_value,
 }) {
   const [total, setTotal] = useState(0)
-  const [q, setq] = useState(0)
-  const [p, setp] = useState(0)
+  const [q, setq] = useState(quantityvalue)
+  const [p, setp] = useState(pricevalue)
   function findTotal(){
     setTotal(Number(p) * Number(q))
   }
@@ -45,7 +45,7 @@ export default function Item({
               getNumber(e);
               setq(e.target.value)
             }}
-            Value={quantityvalue}
+            value={quantityvalue}
           />
         </div>
         <div className="col-span-2">
@@ -57,7 +57,7 @@ export default function Item({
               getPrice(e);
               setp(e.target.value)
             }}
-            Value={pricevalue}
+            value={pricevalue}
           />
         </div>
         <div className="">

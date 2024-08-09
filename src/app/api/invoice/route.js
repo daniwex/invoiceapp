@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { Invoice } from "@/app/DB/models/invoice";
 import {connectToDB} from "../../DB/database.config";
 import { NextResponse } from "next/server";
+import { getDate } from "@/app/utility/utils";
 
 // formId: generateFormId(),
 // name: { type: String },
@@ -70,6 +71,7 @@ import { NextResponse } from "next/server";
 export const POST = async(req, res) => {
     const data = await req.json()
     const user = cookies().get('user_id_invoice').value
+    const date = getDate(data.invoice_date)
     try {
         await connectToDB();
         const invoice = await new Invoice({
@@ -86,7 +88,7 @@ export const POST = async(req, res) => {
             recipient_city:data.recipient_city,
             recipient_postcode:data.recipient_pcode,
             recipient_country:data.recipient_country,
-            invoice_date:data.invoice_date,
+            invoice_date:date,
             payment_terms:data.payment_terms,
             project_description: data.project_description,
         })

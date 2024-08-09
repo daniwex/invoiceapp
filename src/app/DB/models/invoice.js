@@ -47,7 +47,7 @@ const invoiceSchema = new Schema({
     type: String,
   },
   invoice_date: {
-    type: Date,
+    type: String,
   },
   payment_terms: {
     type: String,

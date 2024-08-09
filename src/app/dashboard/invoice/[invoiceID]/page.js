@@ -3,28 +3,45 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import {getFullAmount} from "../../../utility/utils"
-import Invoice from "@/app/component/Invoice";
+import { getFullAmount } from "../../../utility/utils";
+import Form from "@/app/component/Form";
+import Status from "@/app/component/Status";
+import Modal from "@/app/component/Modal";
+import { useAppContext } from "../../../store/context";
+
 export default function page() {
   const formId = usePathname().split("/")[3];
   const [oneInvoice, setOneInvoice] = useState([]);
-  const [total, setTotal] = useState([])
+  const [total, setTotal] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const router = useRouter();
+  let [items_list, setlist] = useState({});
+  let [data, setData] = useState({});
+  let [modal, setModal] = useState(false);
+  const { theme, messageSetter,message } = useAppContext();
 
+  function handleInputChange(value, n, identifier) {
+    console.log(oneInvoice["item_list"]);
+  }
+
+  function handleData(key, value) {
+    setOneInvoice((oneInvoice) => ({ ...oneInvoice, [key]: value }));
+    console.log(oneInvoice);
+  }
   async function deleteInvoice() {
-    {
       try {
         const req = await fetch("/api/invoice/invoice_one", {
           method: "DELETE",
           body: JSON.stringify(formId),
         });
         if (req.ok) {
+          const response = await req.json()
+          messageSetter(response.message, 5000, true)
           router.push("/dashboard");
         }
       } catch (error) {
         console.log(error);
       }
-    }
   }
 
   useEffect(() => {
@@ -37,8 +54,8 @@ export default function page() {
         if (req.ok) {
           const res = await req.json();
           setOneInvoice({ ...res });
-          const t = getFullAmount([...res.item_list ])
-          setTotal(t)
+          const t = getFullAmount([...res.item_list]);
+          setTotal(t);
         }
       } catch (error) {
         console.log(error);
@@ -61,14 +78,19 @@ export default function page() {
           <div className="sm:flex sm:justify-between bg-white h-fit py-6 px-10 items-center mb-10">
             <div className="">
               <span className="sm:text-sm text-[#888EB0] mr-7">Status</span>
-              <span className="text-sm">{oneInvoice.status}</span>
+              <span className="text-sm">
+                <Status status={oneInvoice.status} />
+              </span>
             </div>
             <div className="sm:grid sm:grid-cols-3 text-sm gap-x-3">
-              <button className="text-[#7C5DFA] text-center  bg-[#F9FAFE] h-fit px-5 py-2 rounded-full font-bold flex items-center justify-center">
+              <button
+                onClick={() => setShowForm(true)}
+                className="text-[#7C5DFA] text-center  bg-[#F9FAFE] h-fit px-5 py-2 rounded-full font-bold flex items-center justify-center"
+              >
                 Edit
               </button>
               <button
-                onClick={deleteInvoice}
+                onClick={() => setModal(true)}
                 className="text-[#888EB0] text-center rounded-full  bg-[#373B53] h-fit py-2  font-bold flex items-center justify-center px-3"
               >
                 Delete
@@ -103,6 +125,7 @@ export default function page() {
                 <div>
                   <div>
                     <span className="text-sm text-[#888EB0]">Invoice Date</span>
+                    <div className="py-5 text-sm">{oneInvoice.invoice_date}</div>
                   </div>
                   <div>
                     <span className="text-sm text-[#888EB0]">Payment Due</span>
@@ -145,24 +168,24 @@ export default function page() {
                       </tr>
                     </thead>
                     <tbody>
-                      {
-                        oneInvoice.item_list.map(el => {
-                          return <tr className="text-sm h-[30px] h-[50px]">
+                      {oneInvoice.item_list.map((el) => {
+                        return (
+                          <tr key={el.identifier} className="text-sm h-[50px]">
                             <td>{el.item_name}</td>
                             <td>{el.item_number}</td>
                             <td>{el.item_price}</td>
-                            <td className="font-bold">${Number(el.item_number) * Number(el.item_price)}</td>
+                            <td className="font-bold">
+                              ${Number(el.item_number) * Number(el.item_price)}
+                            </td>
                           </tr>
-                        })
-                      }
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
-                <div className="h-fit bg-[#373B53] px-10 mt-10 sm:flex justify-between text-sm text-white py-5">
+                <div className="h-fit bg-[#373B53] px-10 sm:flex justify-between text-sm text-white py-5">
                   <span>Amount Due</span>
-                  <span>
-                    ${total}
-                  </span>
+                  <span>${total}</span>
                 </div>
               </div>
             ) : (
@@ -170,7 +193,30 @@ export default function page() {
             )}
           </div>
         </div>
+        {showForm ? (
+          <Form
+            left="4.5%"
+            closeform={() => setShowForm(false)}
+            formTitle={oneInvoice.formId}
+            fieldData={oneInvoice}
+            formtype="edit"
+            saveData
+            handleData={handleData}
+            handleInputChange={handleInputChange}
+          />
+        ) : (
+          <></>
+        )}
       </div>
+      {modal ? (
+        <Modal
+          invoiceId={oneInvoice.formId}
+          confirmBtn={deleteInvoice}
+          cancelBtn={() => setModal(false)}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
